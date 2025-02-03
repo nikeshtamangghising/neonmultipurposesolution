@@ -4,15 +4,13 @@ import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
 import Download from './pages/Download';
-
-// Temporary components for other routes
-const Reviews = () => <div>Reviews Page</div>;
-const Contact = () => <div>Contact Page</div>;
-const About = () => <div>About Page</div>;
+import Reviews from './pages/Reviews';
+import Contact from './pages/Contact';
+import About from './pages/About';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/neonmultipurposesolution">
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
