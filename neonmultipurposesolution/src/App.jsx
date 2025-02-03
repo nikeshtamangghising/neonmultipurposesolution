@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
+import Courses from './pages/Courses';
+import Download from './pages/Download';
 
 // Temporary components for other routes
-const Courses = () => <div>Courses Page</div>;
-const Download = () => <div>Download Form Page</div>;
 const Reviews = () => <div>Reviews Page</div>;
 const Contact = () => <div>Contact Page</div>;
 const About = () => <div>About Page</div>;

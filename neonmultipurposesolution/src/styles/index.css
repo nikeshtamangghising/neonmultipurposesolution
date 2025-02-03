@@ -227,4 +227,237 @@ body {
   .features {
     padding: 2rem 1rem;
   }
+}
+
+/* Courses styles */
+.courses {
+  padding: 4rem 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.courses h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.section-description {
+  text-align: center;
+  color: #666;
+  margin-bottom: 3rem;
+  font-size: 1.2rem;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.course-card {
+  background: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+}
+
+.course-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.course-card h3 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.course-description {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.course-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.course-button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.course-button:hover {
+  background-color: #0056b3;
+}
+
+.courses-header {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+  margin-bottom: 2rem;
+}
+
+.courses-header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.courses-header p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .courses {
+    padding: 2rem 1rem;
+  }
+
+  .courses-header {
+    padding: 2rem 1rem;
+  }
+
+  .courses-header h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Download Form styles */
+.download-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.download-header {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: #007bff;
+  color: white;
+}
+
+.download-header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.download-form {
+  padding: 4rem 2rem;
+}
+
+.form-content {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-content h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.form-description {
+  text-align: center;
+  color: #666;
+  margin-bottom: 3rem;
+  font-size: 1.1rem;
+}
+
+.instructions, .requirements {
+  margin-bottom: 2rem;
+}
+
+.instructions h3, .requirements h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.instructions ul, .requirements ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.instructions li, .requirements li {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+  color: #666;
+}
+
+.instructions li:before, .requirements li:before {
+  content: "•";
+  color: #007bff;
+  position: absolute;
+  left: 0;
+}
+
+.download-button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 2rem 0;
+}
+
+.download-button:hover {
+  background-color: #0056b3;
+}
+
+.contact-info {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+  color: #666;
+}
+
+.contact-info p {
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .download-header {
+    padding: 2rem 1rem;
+  }
+
+  .download-header h1 {
+    font-size: 2rem;
+  }
+
+  .download-form {
+    padding: 2rem 1rem;
+  }
+
+  .form-content {
+    padding: 2rem 1rem;
+  }
 } 
