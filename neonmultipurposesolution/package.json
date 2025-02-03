@@ -2,7 +2,7 @@
   "name": "neonmultipurposesolution",
   "private": true,
   "version": "0.1.0",
-  "homepage": "https://[your-github-username].github.io/neonmultipurposesolution",
+  "homepage": "https://nikeshtamangghising.github.io/neonmultipurposesolution",
   "type": "module",
   "scripts": {
     "dev": "vite",
