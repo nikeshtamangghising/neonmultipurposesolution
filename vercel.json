@@ -5,13 +5,20 @@
   "framework": "nextjs",
   "routes": [
     {
+      "src": "^/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/_next/static/(.*)",
+      "dest": "/_next/static/$1"
+    },
+    {
+      "src": "/(.*)\\.(.+)$",
+      "dest": "/$1.$2"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/$1",
-      "headers": {
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff",
-        "x-xss-protection": "1; mode=block"
-      }
+      "dest": "/index.html"
     }
   ],
   "env": {

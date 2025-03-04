@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  trailingSlash: true,
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -27,6 +27,11 @@ const nextConfig = {
       net: false,
       tls: false,
       child_process: false,
+      gl: false,
+      crypto: false,
+      stream: false,
+      path: false,
+      zlib: false,
     };
     
     config.externals = [...(config.externals || []), { canvas: 'canvas' }];
@@ -35,16 +40,6 @@ const nextConfig = {
       test: /\.(glb|gltf)$/,
       type: 'asset/resource',
     });
-
-    // Add support for WebGL and other browser APIs
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      gl: false,
-      crypto: false,
-      stream: false,
-      path: false,
-      zlib: false,
-    };
 
     return config;
   },
