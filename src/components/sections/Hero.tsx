@@ -63,7 +63,7 @@ export const Hero = memo(function Hero() {
         </div>
 
         <div className="flex flex-col-reverse md:flex-row h-full relative z-10">
-          <div className="w-full md:w-1/2 p-4 md:p-8 flex flex-col justify-center items-center md:items-start">
+          <div className="w-full md:w-2/5 p-4 md:p-8 flex flex-col justify-center items-center md:items-start">
             <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-clip-text text-transparent 
               bg-gradient-to-b from-gray-900 to-gray-600 dark:from-neutral-50 dark:to-neutral-400 
               mb-3 md:mb-8 text-center md:text-left transition-opacity duration-500">
@@ -77,7 +77,7 @@ export const Hero = memo(function Hero() {
             </p>
           </div>
 
-          <div className="w-full md:w-1/2 h-full relative">
+          <div className="w-full md:w-3/5 h-full relative">
             <div className="absolute inset-0 bg-blue-100/50 dark:bg-blue-900/50">
               {!splineError && (
                 <SplineScene 
