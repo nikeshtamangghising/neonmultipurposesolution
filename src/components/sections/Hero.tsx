@@ -72,7 +72,7 @@ export const Hero = memo(function Hero() {
             transition-all duration-500 ease-out transform">
             <div className="absolute inset-0">
               <SplineScene 
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                scene="https://my.spline.design/untitled-d2b5d6d4c3c8b9f9a8b7c6d5e4f3g2h1/embed"
                 className="w-full h-full"
                 onLoad={handleSceneLoad}
                 onError={handleSplineError}

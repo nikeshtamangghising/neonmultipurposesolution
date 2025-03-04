@@ -1,7 +1,6 @@
 'use client'
 
-import dynamic from 'next/dynamic'
-import { Suspense, memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 
 const LoadingSpinner = memo(() => (
   <div className="w-full h-full flex items-center justify-center">
@@ -10,23 +9,6 @@ const LoadingSpinner = memo(() => (
 ));
 
 LoadingSpinner.displayName = 'LoadingSpinner';
-
-// Import Spline component with no SSR and proper error handling
-const Spline = dynamic(
-  () => import('@splinetool/react-spline').then((mod) => {
-    if (!mod.default) {
-      throw new Error('Failed to load Spline component');
-    }
-    return mod.default;
-  }).catch((error) => {
-    console.error('Error loading Spline:', error);
-    throw error;
-  }),
-  {
-    ssr: false,
-    loading: () => <LoadingSpinner />,
-  }
-);
 
 interface SplineSceneProps {
   scene: string;
@@ -41,49 +23,42 @@ export const SplineScene = memo(function SplineScene({
   onLoad,
   onError 
 }: SplineSceneProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isReady, setIsReady] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
-          setIsReady(true);
-        } else {
-          setIsReady(false);
+    const handleLoad = () => {
+      setIsLoading(false);
+      if (onLoad) {
+        try {
+          onLoad();
+        } catch (error) {
+          console.error('Error in onLoad callback:', error);
+          handleError('Failed to initialize scene');
         }
       }
-    });
+    };
 
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, []);
+    const handleError = (message: string) => {
+      setLoadError(message);
+      setIsLoading(false);
+      if (onError) onError(message);
+    };
 
-  const handleLoad = () => {
-    setIsLoading(false);
-    if (onLoad) {
-      try {
-        onLoad();
-      } catch (error) {
-        const errorMessage = 'Failed to initialize 3D scene';
-        console.error(errorMessage, error);
-        setLoadError(errorMessage);
-        if (onError) onError(errorMessage);
-      }
+    const iframe = iframeRef.current;
+    if (iframe) {
+      iframe.addEventListener('load', handleLoad);
+      iframe.addEventListener('error', () => handleError('Failed to load scene'));
     }
-  };
 
-  const handleError = (error: any) => {
-    const errorMessage = error?.message || 'Failed to load 3D scene';
-    console.error('Spline error:', error);
-    setLoadError(errorMessage);
-    setIsLoading(false);
-    if (onError) onError(errorMessage);
-  };
+    return () => {
+      if (iframe) {
+        iframe.removeEventListener('load', handleLoad);
+        iframe.removeEventListener('error', () => handleError('Failed to load scene'));
+      }
+    };
+  }, [onLoad, onError]);
 
   if (loadError) {
     return (
@@ -94,31 +69,24 @@ export const SplineScene = memo(function SplineScene({
   }
 
   return (
-    <div 
-      ref={containerRef}
-      className={`w-full h-full ${className || ''}`}
-      style={{ minHeight: '200px', minWidth: '200px' }}
-    >
-      {isReady && (
-        <Suspense fallback={<LoadingSpinner />}>
-          <div className="relative w-full h-full">
-            <Spline
-              scene={scene}
-              onLoad={handleLoad}
-              onError={handleError}
-              style={{
-                width: '100%',
-                height: '100%',
-                transformOrigin: 'center center',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-              }}
-            />
-          </div>
-        </Suspense>
+    <div className={`relative w-full h-full ${className || ''}`}>
+      <iframe
+        ref={iframeRef}
+        src={scene}
+        className="w-full h-full border-0"
+        allow="autoplay; fullscreen; vr"
+        style={{
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          background: 'transparent',
+        }}
+      />
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
+          <LoadingSpinner />
+        </div>
       )}
-      {(isLoading || !isReady) && <LoadingSpinner />}
     </div>
   );
 });
