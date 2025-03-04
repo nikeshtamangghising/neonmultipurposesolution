@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { Suspense, useState, useEffect, memo } from 'react'
+import { Suspense, memo, useEffect, useRef, useState } from 'react'
 
 const LoadingSpinner = memo(() => (
   <div className="w-full h-full flex items-center justify-center">
@@ -11,15 +11,12 @@ const LoadingSpinner = memo(() => (
 
 LoadingSpinner.displayName = 'LoadingSpinner';
 
-// Dynamically import Spline with no SSR and handle loading state
+// Import Spline component with no SSR
 const Spline = dynamic(
-  () => import('@splinetool/react-spline').then((mod) => mod.default).catch(err => {
-    console.error('Failed to load Spline:', err);
-    return () => null;
-  }),
+  () => import('@splinetool/react-spline'),
   {
     ssr: false,
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner />
   }
 );
 
@@ -30,77 +27,55 @@ interface SplineSceneProps {
 }
 
 export const SplineScene = memo(function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
-  const [error, setError] = useState<Error | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (!containerRef.current) return;
 
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    const debouncedResize = debounce(checkMobile, 250);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          setIsReady(true);
+        } else {
+          setIsReady(false);
+        }
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
   }, []);
 
   const handleLoad = () => {
-    setIsLoaded(true);
-    onLoad?.();
+    if (onLoad) {
+      // Add a small delay to ensure WebGL context is fully initialized
+      setTimeout(onLoad, 100);
+    }
   };
-
-  const handleError = (e: any) => {
-    console.error('Spline scene failed to load:', e);
-    setError(new Error('Failed to load 3D scene'));
-  };
-
-  if (error) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-center px-4">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          3D scene failed to load. Please refresh the page or try again later.
-        </p>
-      </div>
-    );
-  }
 
   return (
-    <div className={`w-full h-full ${className} ${!isLoaded ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}`}>
-      <Suspense fallback={<LoadingSpinner />}>
-        <Spline
-          scene={scene}
-          onLoad={handleLoad}
-          onError={handleError}
-          style={{
-            width: '100%',
-            height: '100%',
-            transform: isMobile ? 'scale(0.8)' : 'none',
-            transformOrigin: 'center center',
-            willChange: 'transform'
-          }}
-        />
-      </Suspense>
+    <div 
+      ref={containerRef}
+      className={`w-full h-full ${className}`}
+      style={{ minHeight: '200px', minWidth: '200px' }}
+    >
+      {isReady && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <Spline
+            scene={scene}
+            onLoad={handleLoad}
+            style={{
+              width: '100%',
+              height: '100%',
+              transformOrigin: 'center center'
+            }}
+          />
+        </Suspense>
+      )}
+      {!isReady && <LoadingSpinner />}
     </div>
   );
 });
 
 SplineScene.displayName = 'SplineScene';
-
-// Debounce utility function
-function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
-  return function executedFunction(...args: Parameters<T>) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}

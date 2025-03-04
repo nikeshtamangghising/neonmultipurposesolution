@@ -16,7 +16,7 @@ const teamMembers = [
     social: {
       linkedin: "https://linkedin.com/in/nawarajprajapati",
       twitter: "https://twitter.com/nawarajprajapati",
-      email: "nawaraj@neonmultipurpose.com"
+      email: "mailto:nawaraj@neonmultipurpose.com"
     }
   },
   {
