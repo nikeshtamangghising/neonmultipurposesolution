@@ -10,9 +10,24 @@ export const metadata = {
   title: "Neon Multipurpose Solution",
   description: "Your trusted partner in IT education and professional development.",
   icons: {
-    icon: "/assets/images/logo.png",
-    shortcut: "/assets/images/logo.png",
-    apple: "/assets/images/logo.png",
+    icon: [
+      {
+        url: "/assets/images/logo.png",
+        type: "image/png",
+      },
+    ],
+    shortcut: [
+      {
+        url: "/assets/images/logo.png",
+        type: "image/png",
+      },
+    ],
+    apple: [
+      {
+        url: "/assets/images/logo.png",
+        type: "image/png",
+      },
+    ],
   }
 };
 
@@ -24,6 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/png" href="/assets/images/logo.png" />
       </head>
       <body className={inter.className}>
