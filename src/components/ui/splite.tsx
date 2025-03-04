@@ -11,12 +11,20 @@ const LoadingSpinner = memo(() => (
 
 LoadingSpinner.displayName = 'LoadingSpinner';
 
-// Import Spline component with no SSR
+// Import Spline component with no SSR and proper error handling
 const Spline = dynamic(
-  () => import('@splinetool/react-spline').then((mod) => mod.default),
+  () => import('@splinetool/react-spline').then((mod) => {
+    if (!mod.default) {
+      throw new Error('Failed to load Spline component');
+    }
+    return mod.default;
+  }).catch((err) => {
+    console.error('Error loading Spline:', err);
+    return () => <div>Failed to load 3D scene</div>;
+  }),
   {
     ssr: false,
-    loading: () => <LoadingSpinner />
+    loading: () => <LoadingSpinner />,
   }
 );
 
@@ -29,6 +37,7 @@ interface SplineSceneProps {
 export const SplineScene = memo(function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isReady, setIsReady] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -49,28 +58,45 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
 
   const handleLoad = () => {
     if (onLoad) {
-      // Add a small delay to ensure WebGL context is fully initialized
-      setTimeout(onLoad, 100);
+      try {
+        setTimeout(onLoad, 100);
+      } catch (error) {
+        console.error('Error in onLoad callback:', error);
+        setLoadError('Failed to initialize 3D scene');
+      }
     }
   };
+
+  if (loadError) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-red-500">
+        {loadError}
+      </div>
+    );
+  }
 
   return (
     <div 
       ref={containerRef}
-      className={`w-full h-full ${className}`}
+      className={`w-full h-full ${className || ''}`}
       style={{ minHeight: '200px', minWidth: '200px' }}
     >
       {isReady && (
         <Suspense fallback={<LoadingSpinner />}>
-          <Spline
-            scene={scene}
-            onLoad={handleLoad}
-            style={{
-              width: '100%',
-              height: '100%',
-              transformOrigin: 'center center'
-            }}
-          />
+          <div className="relative w-full h-full">
+            <Spline
+              scene={scene}
+              onLoad={handleLoad}
+              style={{
+                width: '100%',
+                height: '100%',
+                transformOrigin: 'center center',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+              }}
+            />
+          </div>
         </Suspense>
       )}
       {!isReady && <LoadingSpinner />}
