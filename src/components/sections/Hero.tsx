@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, memo, useEffect } from "react";
-import { SplineScene } from "@/components/ui/splite";
 import { Card } from "@/components/ui/card";
 import { Butterfly } from "@/components/ui/butterfly";
 
@@ -17,7 +16,6 @@ export const Hero = memo(function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [butterflyReady, setButterflyReady] = useState(false);
-  const [splineError, setSplineError] = useState<string | null>(null);
 
   useEffect(() => {
     // Start loading butterfly immediately
@@ -27,16 +25,6 @@ export const Hero = memo(function Hero() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  const handleSceneLoad = () => {
-    setIsLoaded(true);
-  };
-
-  const handleSplineError = (error: string) => {
-    setSplineError(error);
-    // Still mark as loaded to show other content
-    setIsLoaded(true);
-  };
 
   return (
     <section id="home" className="pt-[64px] bg-white dark:bg-black min-h-screen">
@@ -71,19 +59,20 @@ export const Hero = memo(function Hero() {
           <div className="w-full md:w-1/2 h-[300px] sm:h-[350px] md:h-[500px] relative
             transition-all duration-500 ease-out transform">
             <div className="absolute inset-0">
-              <SplineScene 
-                scene="https://my.spline.design/untitled-d2b5d6d4c3c8b9f9a8b7c6d5e4f3g2h1/embed"
-                className="w-full h-full"
-                onLoad={handleSceneLoad}
-                onError={handleSplineError}
+              <iframe
+                src="https://my.spline.design/untitled-d2b5d6d4c3c8b9f9a8b7c6d5e4f3g2h1/embed"
+                frameBorder="0"
+                width="100%"
+                height="100%"
+                allowFullScreen
+                onLoad={() => setIsLoaded(true)}
+                style={{
+                  opacity: isLoaded ? 1 : 0,
+                  transition: 'opacity 0.5s ease-in-out'
+                }}
               />
             </div>
             {!isLoaded && <LoadingSpinner />}
-            {splineError && (
-              <div className="absolute inset-0 flex items-center justify-center text-red-500 bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur-sm">
-                <p className="text-sm">Failed to load 3D scene. Please refresh the page.</p>
-              </div>
-            )}
           </div>
         </div>
       </Card>
