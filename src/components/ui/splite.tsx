@@ -18,9 +18,6 @@ const Spline = dynamic(
       throw new Error('Failed to load Spline component');
     }
     return mod.default;
-  }).catch((err) => {
-    console.error('Error loading Spline:', err);
-    return () => <div>Failed to load 3D scene</div>;
   }),
   {
     ssr: false,
@@ -38,6 +35,7 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
   const containerRef = useRef<HTMLDivElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -57,9 +55,10 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
   }, []);
 
   const handleLoad = () => {
+    setIsLoading(false);
     if (onLoad) {
       try {
-        setTimeout(onLoad, 100);
+        onLoad();
       } catch (error) {
         console.error('Error in onLoad callback:', error);
         setLoadError('Failed to initialize 3D scene');
@@ -99,7 +98,7 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
           </div>
         </Suspense>
       )}
-      {!isReady && <LoadingSpinner />}
+      {(isLoading || !isReady) && <LoadingSpinner />}
     </div>
   );
 });
