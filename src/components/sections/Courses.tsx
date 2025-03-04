@@ -228,9 +228,9 @@ const coursesData = [
 
 export function Courses() {
   return (
-    <section id="courses" className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white dark:bg-gray-900 relative">
+    <section id="courses" className="py-8 sm:py-12 md:py-16 lg:py-20 bg-white dark:bg-gray-900 relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8 sm:mb-12">
+        <div className="text-center mb-6 sm:mb-8 md:mb-10">
           <div className="inline-block">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold 
               bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600
@@ -248,8 +248,8 @@ export function Courses() {
           </p>
         </div>
 
-        <div className="relative max-w-5xl mx-auto min-h-[650px] xs:min-h-[700px] sm:min-h-[750px] md:min-h-[800px] lg:min-h-[850px]
-          mb-12 sm:mb-16 md:mb-20 lg:mb-24 overflow-visible">
+        <div className="relative max-w-5xl mx-auto min-h-[500px] xs:min-h-[600px] sm:min-h-[650px] md:min-h-[700px] lg:min-h-[750px]
+          mb-8 sm:mb-12 md:mb-16 lg:mb-20 overflow-visible">
           <CourseStack courses={coursesData} />
         </div>
       </div>

@@ -13,7 +13,7 @@ LoadingSpinner.displayName = 'LoadingSpinner';
 
 // Import Spline component with no SSR
 const Spline = dynamic(
-  () => import('@splinetool/react-spline'),
+  () => import('@splinetool/react-spline').then((mod) => mod.default),
   {
     ssr: false,
     loading: () => <LoadingSpinner />
