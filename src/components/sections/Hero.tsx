@@ -87,19 +87,6 @@ export const Hero = memo(function Hero() {
                 onError={handleSplineError}
               />
             </div>
-            {splineError && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 
-                bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm p-4 text-center">
-                <p className="text-red-500 dark:text-red-400">Failed to load 3D scene</p>
-                <button
-                  onClick={handleRetry}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg 
-                    transition-colors duration-200 text-sm"
-                >
-                  Try Again
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </Card>
