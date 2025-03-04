@@ -44,10 +44,16 @@ const nextConfig = {
       zlib: false,
     };
 
+    // Fix for framer-motion webpack internal URL issue
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'framer-motion': require.resolve('framer-motion'),
+    };
+
     return config;
   },
   // Add transpilePackages for client components
-  transpilePackages: ['@splinetool/react-spline', '@splinetool/runtime'],
+  transpilePackages: ['@splinetool/react-spline', '@splinetool/runtime', 'framer-motion'],
 }
 
 module.exports = nextConfig; 
