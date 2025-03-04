@@ -16,7 +16,7 @@ export const Hero = memo(function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [butterflyReady, setButterflyReady] = useState(false);
-  const [loadError, setLoadError] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -25,8 +25,9 @@ export const Hero = memo(function Hero() {
 
     // Add error handling for iframe
     const handleIframeError = () => {
-      console.error('Failed to load Spline scene');
-      setLoadError(true);
+      const error = 'Failed to load 3D scene';
+      console.error(error);
+      setLoadError(error);
       setIsLoaded(true);
     };
 
@@ -35,17 +36,25 @@ export const Hero = memo(function Hero() {
       iframe.addEventListener('error', handleIframeError);
     }
 
+    // Set a timeout to check if loading takes too long
+    const timeoutId = setTimeout(() => {
+      if (!isLoaded) {
+        setLoadError('Loading timeout - Please check your connection');
+      }
+    }, 10000); // 10 seconds timeout
+
     return () => {
       if (iframe) {
         iframe.removeEventListener('error', handleIframeError);
       }
+      clearTimeout(timeoutId);
     };
-  }, []);
+  }, [isLoaded]);
 
   // Function to handle iframe load
   const handleIframeLoad = () => {
     setIsLoaded(true);
-    setLoadError(false);
+    setLoadError(null);
   };
 
   return (
@@ -86,14 +95,14 @@ export const Hero = memo(function Hero() {
               {!loadError ? (
                 <iframe
                   ref={iframeRef}
-                  src="https://my.spline.design/roomrelaxingcopy-b02aab4d0bfb9a8424cdb97ef3931325/"
+                  src="https://my.spline.design/nexbotrobotcharacterconcept-63ef2e06f2694e675d93360f8a91f2e1/"
                   frameBorder="0"
                   width="100%"
                   height="100%"
                   allowFullScreen
                   className="w-full h-full"
                   onLoad={handleIframeLoad}
-                  onError={() => setLoadError(true)}
+                  onError={() => setLoadError('Failed to load 3D scene')}
                   style={{
                     opacity: isLoaded ? 1 : 0,
                     transition: "opacity 0.5s ease-in-out",
@@ -101,10 +110,19 @@ export const Hero = memo(function Hero() {
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur-sm">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    3D scene temporarily unavailable
+                <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gray-100/50 dark:bg-gray-800/50 backdrop-blur-sm p-4">
+                  <p className="text-sm text-red-500 dark:text-red-400 text-center font-medium">
+                    {loadError}
                   </p>
+                  <button
+                    onClick={() => {
+                      setLoadError(null);
+                      setIsLoaded(false);
+                    }}
+                    className="px-4 py-2 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    Try Again
+                  </button>
                 </div>
               )}
             </div>
