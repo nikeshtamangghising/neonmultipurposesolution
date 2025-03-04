@@ -20,6 +20,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  trailingSlash: true,
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
@@ -38,7 +39,6 @@ const nextConfig = {
 
     return config;
   },
-  trailingSlash: true,
 }
 
 module.exports = nextConfig; 

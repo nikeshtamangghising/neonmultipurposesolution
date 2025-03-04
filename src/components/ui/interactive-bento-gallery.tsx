@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 
 // MediaItemType defines the structure of a media item
@@ -12,6 +13,7 @@ interface MediaItemType {
     desc: string;
     url: string;
     span: string;
+    loading?: "lazy" | "eager";
 }
 // MediaItem component renders either a video or image based on item.type
 const MediaItem = ({ item, className, onClick }: { item: MediaItemType, className?: string, onClick?: () => void }) => {
@@ -119,14 +121,22 @@ const MediaItem = ({ item, className, onClick }: { item: MediaItemType, classNam
     }
 
     return (
-        <img
-            src={item.url} // Image source URL
-            alt={item.title} // Alt text for the image
-            className={`${className} object-cover cursor-pointer`} // Style the image
-            onClick={onClick} // Trigger onClick when the image is clicked
-            loading="lazy" // Lazy load the image for performance
-            decoding="async" // Decode the image asynchronously
-        />
+        <div
+            className={cn(
+                "group relative overflow-hidden rounded-3xl bg-gray-100 dark:bg-gray-800",
+                item.span,
+                className
+            )}
+            onClick={onClick}
+        >
+            <img
+                src={item.url}
+                alt={item.title}
+                loading={item.loading || "lazy"}
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500
+                    group-hover:scale-105"
+            />
+        </div>
     );
 };
 

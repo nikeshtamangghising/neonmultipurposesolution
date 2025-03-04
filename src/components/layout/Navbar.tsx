@@ -149,7 +149,8 @@ const Navbar = () => {
                   height={50}
                   className="dark:invert transform group-hover:scale-105 transition duration-300
                     w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px]"
-                  priority
+                  loading="eager"
+                  priority={true}
                 />
               </button>
             </Link>

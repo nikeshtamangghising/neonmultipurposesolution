@@ -41,16 +41,18 @@ const mediaItems = [
     type: "image",
     title: "Modern Development Environment",
     desc: "State-of-the-art coding workspace with latest tools and technologies",
-    url: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&fit=crop",
+    url: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&fit=crop&auto=format&quality=80",
     span: "md:col-span-2 md:row-span-2",
+    loading: "eager" as const
   },
   {
     id: 2,
     type: "image",
     title: "Collaborative Learning",
     desc: "Interactive pair programming and team collaboration sessions",
-    url: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=2070&fit=crop",
+    url: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=2070&fit=crop&auto=format&quality=80",
     span: "md:col-span-1 md:row-span-2",
+    loading: "lazy" as const
   },
   {
     id: 3,
@@ -59,6 +61,7 @@ const mediaItems = [
     desc: "Advanced AI and machine learning training facilities",
     url: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&fit=crop",
     span: "md:col-span-1 md:row-span-2",
+    loading: "lazy" as const
   },
   {
     id: 4,
@@ -67,6 +70,7 @@ const mediaItems = [
     desc: "Modern cloud computing and DevOps practices",
     url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2070&fit=crop",
     span: "md:col-span-2 md:row-span-2",
+    loading: "lazy" as const
   },
   {
     id: 5,
@@ -75,6 +79,7 @@ const mediaItems = [
     desc: "Cross-platform mobile app development training",
     url: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&fit=crop",
     span: "md:col-span-1 md:row-span-2",
+    loading: "lazy" as const
   },
   {
     id: 6,
@@ -83,6 +88,7 @@ const mediaItems = [
     desc: "Full-stack web development with modern frameworks",
     url: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?q=80&w=2074&fit=crop",
     span: "md:col-span-2 md:row-span-2",
+    loading: "lazy" as const
   }
 ];
 
@@ -220,6 +226,7 @@ export function About() {
                     src={member.image}
                     alt={member.name}
                     className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
+                    loading={index < 2 ? "eager" : "lazy"}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent 
                     opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
