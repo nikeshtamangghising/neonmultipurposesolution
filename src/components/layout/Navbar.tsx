@@ -141,6 +141,7 @@ const Navbar = () => {
                 onClick={() => scrollToSection('home')}
                 className="relative group focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
                 aria-label="Home"
+                data-testid="home-button"
               >
                 <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 
                   opacity-0 group-hover:opacity-20 transition duration-300" />

@@ -22,14 +22,12 @@ export const metadata = {
         type: "image/png"
       }
     ],
-    shortcut: ["/assets/images/logo.png"],
-    apple: [
-      {
-        url: "/assets/images/logo.png",
-        sizes: "180x180",
-        type: "image/png"
-      }
-    ]
+    shortcut: "/assets/images/logo.png",
+    apple: {
+      url: "/assets/images/logo.png",
+      sizes: "180x180",
+      type: "image/png"
+    }
   }
 };
 
