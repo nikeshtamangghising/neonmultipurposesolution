@@ -1,26 +1,5 @@
 {
-  "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "out",
   "framework": "nextjs",
-  "routes": [
-    {
-      "src": "^/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/_next/static/(.*)",
-      "dest": "/_next/static/$1"
-    },
-    {
-      "src": "/(.*)\\.(.+)$",
-      "dest": "/$1.$2"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "env": {
     "NEXT_PUBLIC_URL": "https://nmsmultipurpose.vercel.app"
   },
@@ -28,11 +7,5 @@
     "sizes": [640, 750, 828, 1080, 1200, 1920],
     "domains": ["images.unsplash.com", "prod.spline.design"],
     "minimumCacheTTL": 60
-  },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ]
+  }
 } 
