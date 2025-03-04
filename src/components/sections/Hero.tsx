@@ -86,7 +86,7 @@ export const Hero = memo(function Hero() {
               {!loadError ? (
                 <iframe
                   ref={iframeRef}
-                  src="https://prod.spline.design/fknD8PNUdPK1Zp-RtyRX/scene.splinecode"
+                  src="https://my.spline.design/roomrelaxingcopy-b02aab4d0bfb9a8424cdb97ef3931325/"
                   frameBorder="0"
                   width="100%"
                   height="100%"
@@ -97,6 +97,7 @@ export const Hero = memo(function Hero() {
                   style={{
                     opacity: isLoaded ? 1 : 0,
                     transition: "opacity 0.5s ease-in-out",
+                    background: "transparent",
                   }}
                 />
               ) : (
