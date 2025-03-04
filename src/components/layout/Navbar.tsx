@@ -135,27 +135,26 @@ const Navbar = () => {
         <div className="flex items-center h-20 lg:h-24">
           {/* Logo and Company Name */}
           <div className="flex-shrink-0 flex items-center gap-4 sm:gap-6">
-            <Link href="/">
-              <button 
-                type="button"
-                onClick={() => scrollToSection('home')}
-                className="relative group focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
-                aria-label="Home"
-                data-testid="home-button"
-              >
-                <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 
-                  opacity-0 group-hover:opacity-20 transition duration-300" />
-                <Image 
-                  src="/assets/images/logo.png"
-                  alt="Neon Multipurpose Solution"
-                  width={50}
-                  height={50}
-                  className="dark:invert transform group-hover:scale-105 transition duration-300
-                    w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px]"
-                  loading="eager"
-                  priority={true}
-                />
-              </button>
+            <Link
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('home');
+              }}
+              className="relative group focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              aria-label="Navigate to home section"
+            >
+              <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 
+                opacity-0 group-hover:opacity-20 transition duration-300" />
+              <Image 
+                src="/assets/images/logo.png"
+                alt="Neon Multipurpose Solution"
+                width={50}
+                height={50}
+                className="dark:invert transform group-hover:scale-105 transition duration-300
+                  w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px]"
+                priority
+              />
             </Link>
             <div className="border-l pl-3 sm:pl-4 lg:pl-6 border-gray-200 dark:border-gray-700">
               <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r 
@@ -188,14 +187,17 @@ const Navbar = () => {
               {/* Theme Toggle */}
               {mounted && (
                 <button
+                  type="button"
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="relative group p-2 sm:p-2.5 lg:p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
-                    hover:bg-gray-100 dark:hover:bg-gray-800"
-                  aria-label="Toggle theme"
+                  className="relative p-2 sm:p-2.5 lg:p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+                  aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
                 >
-                  <div className="relative z-10 text-gray-700 dark:text-gray-300 transform group-hover:rotate-12 transition-transform duration-300">
-                    {theme === 'dark' ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
-                  </div>
+                  {theme === 'dark' ? (
+                    <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
+                  ) : (
+                    <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
+                  )}
                 </button>
               )}
 
@@ -216,16 +218,19 @@ const Navbar = () => {
 
               {/* Mobile menu button */}
               <button
+                type="button"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="lg:hidden p-2 sm:p-2.5 rounded-lg text-gray-700 dark:text-gray-300 
-                  hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200
+                  hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200
                   focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Toggle menu"
+                aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMenuOpen}
               >
-                {isMenuOpen ? 
-                  <X className="w-5 h-5 sm:w-6 sm:h-6" /> : 
+                {isMenuOpen ? (
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                ) : (
                   <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-                }
+                )}
               </button>
             </div>
           </div>

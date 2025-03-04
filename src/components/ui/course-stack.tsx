@@ -110,25 +110,26 @@ export function CourseStack({ courses }: { courses: CourseItem[] }) {
   }, [resetStack]);
 
   return (
-    <div ref={stackRef} className="absolute inset-0 w-full h-full overflow-visible">
+    <div ref={stackRef} className="w-full">
       <div className={cn(
-        "group relative w-full h-full px-2 sm:px-3 pb-2 sm:pb-3 pt-6 sm:pt-8",
+        "relative w-full pt-0",
         "transition-opacity duration-300",
         !isVisible && "opacity-0"
       )}>
         {visibleCourses.length > 0 ? (
-          <div className="relative w-full h-full overflow-visible">
+          <div className="relative w-full">
             {visibleCourses.map((course, index) => (
               <div
                 key={course.href}
                 className={cn(
-                  "absolute left-0 right-0 w-full transition-all duration-300",
+                  "w-full transition-all duration-300",
                   "transform-gpu will-change-transform",
+                  index === 0 ? "relative" : "absolute top-0 left-0 right-0",
                   index > 0 && "pointer-events-none select-none"
                 )}
                 style={{
                   zIndex: visibleCourses.length - index,
-                  transform: `translateY(${-index * factors.offset}%) scale(${1 - index * factors.scale})`,
+                  transform: index === 0 ? 'none' : `translateY(${-index * factors.offset}%) scale(${1 - index * factors.scale})`,
                   opacity: Math.max(0, 1 - index * factors.opacity)
                 }}
               >
@@ -144,8 +145,8 @@ export function CourseStack({ courses }: { courses: CourseItem[] }) {
             ))}
           </div>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="max-w-md text-center">
+          <div className="w-full py-16">
+            <div className="max-w-md mx-auto text-center">
               <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
                 You've viewed all courses!
               </h3>
