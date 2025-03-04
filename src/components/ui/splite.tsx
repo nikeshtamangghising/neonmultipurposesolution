@@ -18,6 +18,9 @@ const Spline = dynamic(
       throw new Error('Failed to load Spline component');
     }
     return mod.default;
+  }).catch((error) => {
+    console.error('Error loading Spline:', error);
+    throw error;
   }),
   {
     ssr: false,
@@ -29,9 +32,15 @@ interface SplineSceneProps {
   scene: string;
   className?: string;
   onLoad?: () => void;
+  onError?: (error: string) => void;
 }
 
-export const SplineScene = memo(function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
+export const SplineScene = memo(function SplineScene({ 
+  scene, 
+  className, 
+  onLoad,
+  onError 
+}: SplineSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isReady, setIsReady] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -60,10 +69,20 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
       try {
         onLoad();
       } catch (error) {
-        console.error('Error in onLoad callback:', error);
-        setLoadError('Failed to initialize 3D scene');
+        const errorMessage = 'Failed to initialize 3D scene';
+        console.error(errorMessage, error);
+        setLoadError(errorMessage);
+        if (onError) onError(errorMessage);
       }
     }
+  };
+
+  const handleError = (error: any) => {
+    const errorMessage = error?.message || 'Failed to load 3D scene';
+    console.error('Spline error:', error);
+    setLoadError(errorMessage);
+    setIsLoading(false);
+    if (onError) onError(errorMessage);
   };
 
   if (loadError) {
@@ -86,6 +105,7 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
             <Spline
               scene={scene}
               onLoad={handleLoad}
+              onError={handleError}
               style={{
                 width: '100%',
                 height: '100%',
