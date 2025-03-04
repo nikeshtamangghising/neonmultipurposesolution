@@ -78,7 +78,7 @@ export const Hero = memo(function Hero() {
           </div>
 
           <div className="w-full md:w-[55%] h-full relative">
-            <div className="absolute inset-0 bg-blue-100/50 dark:bg-blue-900/50">
+            <div className="absolute inset-0">
               {!splineError && (
                 <SplineScene 
                   key={retryCount}
