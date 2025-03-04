@@ -1,206 +1,261 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { useTheme } from 'next-themes';
-import { Moon, Sun, Download } from 'lucide-react';
+import { Moon, Sun, Download, Menu, X, ChevronDown } from 'lucide-react';
 import Image from "next/image";
+import Link from "next/link";
+import styles from "./Navbar.module.css";
+
+const navigation = [
+  { name: "Home", href: "home" },
+  { name: "Courses", href: "courses" },
+  { name: "Why Choose Us", href: "why-choose-us" },
+  { name: "Testimonials", href: "testimonials" },
+  { name: "About", href: "about" },
+  { name: "Contact", href: "contact" },
+] as const;
+
+const NavLink = memo(function NavLink({ 
+  item, 
+  isActive, 
+  onClick 
+}: { 
+  item: typeof navigation[number],
+  isActive: boolean,
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`relative group px-3 py-2 xl:px-6 xl:py-3 text-sm xl:text-base font-medium overflow-hidden
+        hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg
+        ${isActive ? 'text-blue-600 dark:text-blue-400' : ''}`}
+    >
+      <span className="relative z-10 text-gray-700 dark:text-gray-300 
+        group-hover:text-blue-600 dark:group-hover:text-blue-400 
+        transition-colors duration-200 whitespace-nowrap">
+        {item.name}
+        {isActive && (
+          <ChevronDown className="w-4 h-4 inline-block ml-1 animate-bounce" />
+        )}
+      </span>
+      <div className={`absolute bottom-0 left-0 h-0.5 w-full transform 
+        ${isActive ? 'scale-x-100' : 'scale-x-0'} 
+        group-hover:scale-x-100 transition-transform duration-300 
+        bg-gradient-to-r from-blue-600 to-purple-600`} />
+    </button>
+  );
+});
+
+const MobileNavLink = memo(function MobileNavLink({
+  item,
+  isActive,
+  onClick
+}: {
+  item: typeof navigation[number],
+  isActive: boolean,
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center w-full px-4 py-2.5 rounded-lg text-base font-medium 
+        transition duration-200 ${
+          isActive
+            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+        }`}
+    >
+      {item.name}
+      {isActive && (
+        <ChevronDown className="w-4 h-4 ml-2 animate-bounce" />
+      )}
+    </button>
+  );
+});
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
+  const handleScroll = useCallback(() => {
+    setScrolled(window.scrollY > 20);
+
+    // Update active section based on scroll position
+    const sections = navigation.map(item => document.getElementById(item.href));
+    const scrollPosition = window.scrollY + 100;
+
+    sections.forEach((section) => {
+      if (section) {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+          setActiveSection(section.id);
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const debouncedScroll = debounce(handleScroll, 100);
+    window.addEventListener('scroll', debouncedScroll, { passive: true });
+    return () => window.removeEventListener('scroll', debouncedScroll);
+  }, [handleScroll]);
+
+  const scrollToSection = useCallback((id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const offsetTop = element.offsetTop - 64; // Account for navbar height
+      const offsetTop = element.offsetTop - 80;
       window.scrollTo({
         top: offsetTop,
         behavior: 'smooth'
       });
       setIsMenuOpen(false);
+      setActiveSection(id);
     }
-  };
-
-  const navigation = [
-    { name: "Home", href: "home" },
-    { name: "Courses", href: "courses" },
-    { name: "Why Choose Us", href: "why-choose-us" },
-    { name: "Testimonials", href: "testimonials" },
-    { name: "About", href: "about" },
-    { name: "Contact", href: "contact" },
-  ];
-
-  // Update the download function
-  const handleDownload = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    
-    try {
-      // Use window.location to trigger a direct download
-      window.location.href = '/assets/documents/NMS_Admission_Form_2024.pdf';
-    } catch (error) {
-      console.error('Download failed:', error);
-      alert('Sorry, the admission form is currently unavailable. Please try again later or contact support.');
-    }
-  };
+  }, []);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
-      ${scrolled ? 'bg-white/80 backdrop-blur-md dark:bg-gray-900/80 shadow-lg' : 'bg-white dark:bg-gray-900'}
-      border-b border-gray-200/50 dark:border-gray-700/50`}>
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center h-20">
+    <nav 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 
+        ${scrolled 
+          ? 'bg-white/90 backdrop-blur-xl dark:bg-gray-900/90 shadow-lg shadow-gray-200/20 dark:shadow-gray-800/20' 
+          : 'bg-white dark:bg-gray-900'
+        } border-b border-gray-200/50 dark:border-gray-800/50`}
+    >
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16">
+        <div className="flex items-center h-20 lg:h-24">
           {/* Logo and Company Name */}
-          <div className="flex-shrink-0 flex items-center gap-6 transition-transform hover:scale-105">
-            <button 
-              onClick={() => scrollToSection('home')}
-              className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-1"
-            >
-              <Image 
-                src="/assets/logo.svg" 
-                alt="Neon Multipurpose Solution" 
-                width={150}
-                height={40}
-              />
-            </button>
-            <div className="hidden lg:block border-l pl-6 border-gray-200 dark:border-gray-700">
-              <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r 
-                from-gray-900 via-gray-700 to-gray-900
-                dark:from-gray-100 dark:via-gray-300 dark:to-gray-100
-                tracking-tight">
+          <div className="flex-shrink-0 flex items-center gap-4 sm:gap-6">
+            <Link href="/">
+              <button 
+                onClick={() => scrollToSection('home')}
+                className="relative group focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              >
+                <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 
+                  opacity-0 group-hover:opacity-20 transition duration-300" />
+                <Image 
+                  src="/assets/images/logo.png"
+                  alt="Neon Multipurpose Solution"
+                  width={50}
+                  height={50}
+                  className="dark:invert transform group-hover:scale-105 transition duration-300
+                    w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px]"
+                  priority
+                />
+              </button>
+            </Link>
+            <div className="border-l pl-3 sm:pl-4 lg:pl-6 border-gray-200 dark:border-gray-700">
+              <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r 
+                from-blue-600 via-purple-600 to-blue-600
+                dark:from-blue-400 dark:via-purple-400 dark:to-blue-400 line-clamp-1">
                 Neon Multipurpose Solution
               </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">
+              <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 hidden xs:block">
                 Empowering Future Through Technology
               </p>
             </div>
           </div>
 
-          {/* Center Navigation */}
-          <div className="hidden md:flex flex-1 justify-center">
-            <div className="flex items-center space-x-2">
-              {navigation.map((section) => (
-                <button
-                  key={section.name}
-                  onClick={() => scrollToSection(section.href)}
-                  className="px-5 py-2.5 text-base font-medium text-gray-700 dark:text-gray-200 
-                    hover:text-blue-600 dark:hover:text-blue-400 
-                    rounded-lg transition-all duration-200 
-                    hover:bg-blue-50 dark:hover:bg-blue-900/30
-                    focus:outline-none focus:ring-2 focus:ring-blue-500
-                    capitalize mx-1"
-                >
-                  {section.name}
-                </button>
+          {/* Right Side Content */}
+          <div className="flex-1 flex justify-end items-center">
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-1 xl:space-x-3 mr-6 xl:mr-16">
+              {navigation.map((item) => (
+                <NavLink
+                  key={item.name}
+                  item={item}
+                  isActive={activeSection === item.href}
+                  onClick={() => scrollToSection(item.href)}
+                />
               ))}
             </div>
-          </div>
 
-          {/* Right Side Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <a
-              href="/assets/documents/NMS_Admission_Form_2024.pdf"
-              onClick={handleDownload}
-              className="flex items-center gap-2 px-6 py-2.5 
-                bg-blue-600 hover:bg-blue-700 
-                text-white rounded-lg transition-all duration-200
-                hover:shadow-lg hover:-translate-y-0.5
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-                group"
-            >
-              <Download size={18} className="group-hover:translate-y-1 transition-transform" />
-              <span>Admission Form</span>
-            </a>
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-lg 
-                bg-gray-100 dark:bg-gray-800 
-                text-gray-800 dark:text-gray-200 
-                hover:bg-gray-200 dark:hover:bg-gray-700 
-                transition-all duration-200
-                hover:shadow-lg hover:-translate-y-0.5
-                focus:outline-none focus:ring-2 focus:ring-blue-500"
-              aria-label="Toggle theme"
-            >
-              {mounted && (theme === 'dark' ? 
-                <Sun size={20} className="transition-transform duration-500 hover:rotate-180" /> : 
-                <Moon size={20} className="transition-transform duration-500 hover:-rotate-90" />
+            {/* Actions */}
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Theme Toggle */}
+              {mounted && (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="relative group p-2 sm:p-2.5 lg:p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                    hover:bg-gray-100 dark:hover:bg-gray-800"
+                  aria-label="Toggle theme"
+                >
+                  <div className="relative z-10 text-gray-700 dark:text-gray-300 transform group-hover:rotate-12 transition-transform duration-300">
+                    {theme === 'dark' ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                  </div>
+                </button>
               )}
-            </button>
-          </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden ml-auto">
-            <button 
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 
-                transition-colors duration-200
-                focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <div className={`w-6 h-0.5 bg-gray-600 dark:bg-gray-300 transition-all duration-300 
-                ${isMenuOpen ? 'rotate-45 translate-y-[6px]' : ''}`} />
-              <div className={`w-6 h-0.5 bg-gray-600 dark:bg-gray-300 mt-1.5 
-                transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
-              <div className={`w-6 h-0.5 bg-gray-600 dark:bg-gray-300 mt-1.5 
-                transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-[6px]' : ''}`} />
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out
-          ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            {navigation.map((section) => (
-              <button
-                key={section.name}
-                onClick={() => scrollToSection(section.href)}
-                className="block w-full px-3 py-2 text-base font-medium 
-                  text-gray-700 dark:text-gray-200 
-                  hover:bg-gray-100 dark:hover:bg-gray-800 
-                  rounded-lg transition-colors duration-200
-                  focus:outline-none focus:ring-2 focus:ring-blue-500
-                  capitalize"
-              >
-                {section.name}
-              </button>
-            ))}
-            <div className="flex items-center gap-2 mt-2">
+              {/* Download Button - Hidden on mobile */}
               <a
                 href="/assets/documents/NMS_Admission_Form_2024.pdf"
-                onClick={handleDownload}
-                className="flex-1 flex items-center justify-center gap-2 
-                  px-3 py-2 text-base font-medium 
-                  text-white bg-blue-600 hover:bg-blue-700 
-                  rounded-lg transition-all duration-200
-                  hover:shadow-lg
-                  focus:outline-none focus:ring-2 focus:ring-blue-500
-                  group"
+                className="hidden sm:inline-flex relative group items-center px-4 py-2 lg:px-6 lg:py-3 rounded-lg 
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-hidden
+                  bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90"
               >
-                <Download size={16} className="group-hover:translate-y-1 transition-transform" />
-                <span>Admission Form</span>
+                <div className="absolute top-0 -inset-full h-full w-1/2 block transform -skew-x-12 
+                  bg-gradient-to-r from-transparent to-white opacity-40 group-hover:animate-shine" />
+                <Download className="relative z-10 w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 text-white" />
+                <span className="relative z-10 text-xs sm:text-sm font-medium text-white whitespace-nowrap">
+                  Admission Form
+                </span>
               </a>
+
+              {/* Mobile menu button */}
               <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2 rounded-lg 
-                  bg-gray-100 dark:bg-gray-800 
-                  text-gray-800 dark:text-gray-200
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="lg:hidden p-2 sm:p-2.5 rounded-lg text-gray-700 dark:text-gray-300 
+                  hover:bg-gray-100 dark:hover:bg-gray-800 transition duration-200
                   focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Toggle theme"
+                aria-label="Toggle menu"
               >
-                {mounted && (theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />)}
+                {isMenuOpen ? 
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" /> : 
+                  <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+                }
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      <div 
+        className={`lg:hidden transform transition-all duration-300 ease-in-out
+          fixed top-[80px] left-0 right-0 bg-white dark:bg-gray-900 
+          shadow-lg dark:shadow-gray-800/50 max-h-[calc(100vh-80px)] overflow-y-auto
+          ${isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}
+      >
+        <div className="container mx-auto px-4 py-2">
+          <div className="grid gap-1 py-2">
+            {navigation.map((item) => (
+              <MobileNavLink
+                key={item.name}
+                item={item}
+                isActive={activeSection === item.href}
+                onClick={() => scrollToSection(item.href)}
+              />
+            ))}
+            {/* Download Button in mobile menu */}
+            <a
+              href="/assets/documents/NMS_Admission_Form_2024.pdf"
+              className="flex items-center justify-center w-full px-4 py-2.5 rounded-lg text-base font-medium 
+                text-white bg-gradient-to-r from-blue-600 to-purple-600 
+                hover:opacity-90 transition duration-200 mt-1
+                focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Admission Form
+            </a>
           </div>
         </div>
       </div>
@@ -208,4 +263,20 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+// Debounce utility function
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: Parameters<T>) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+export default memo(Navbar); 

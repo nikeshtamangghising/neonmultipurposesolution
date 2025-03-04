@@ -1,43 +1,71 @@
 "use client";
 
+import { useRef, useState, memo } from "react";
 import { SplineScene } from "@/components/ui/splite";
 import { Card } from "@/components/ui/card";
-import { Spotlight } from "@/components/ui/spotlight";
+import { Butterfly } from "@/components/ui/butterfly";
 
-export function Hero() {
+const LoadingSpinner = memo(() => (
+  <div className="w-full h-full flex items-center justify-center">
+    <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent"></div>
+  </div>
+));
+
+LoadingSpinner.displayName = 'LoadingSpinner';
+
+export const Hero = memo(function Hero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [sceneLoaded, setSceneLoaded] = useState(false);
+
+  const handleSceneLoad = () => {
+    setSceneLoaded(true);
+  };
+
   return (
     <section id="home" className="pt-[64px] bg-white dark:bg-black">
-      <Card className="w-full h-[450px] md:h-[700px] bg-white dark:bg-black 
+      <Card 
+        ref={containerRef}
+        className="w-full h-[450px] md:h-[700px] bg-white dark:bg-black 
         relative overflow-hidden shadow-xl dark:shadow-none
         border-border/10 dark:border-border/5
-        rounded-none border-t-0">
-        <Spotlight
-          className="-top-40 left-0 md:left-60 md:-top-20"
-          fill="currentColor"
-        />
-        
-        <div className="flex flex-col md:flex-row h-full items-center justify-center gap-8 px-4">
+        rounded-none border-t-0"
+      >
+        {/* Butterfly constrained to Card */}
+        <Butterfly className="scale-[0.3]" containerRef={containerRef} />
+
+        <div className="flex flex-col-reverse md:flex-row h-full items-center justify-center gap-4 md:gap-8 px-4">
           <div className="w-full md:w-1/2 p-4 md:p-8 relative z-10 flex flex-col justify-center items-center md:items-start">
-            <h2 className="text-4xl md:text-8xl font-bold bg-clip-text text-transparent 
+            <h2 className={`text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-clip-text text-transparent 
               bg-gradient-to-b from-gray-900 to-gray-600 dark:from-neutral-50 dark:to-neutral-400 
-              mb-4 md:mb-8 text-center md:text-left">
+              mb-3 md:mb-8 text-center md:text-left transition-opacity duration-500
+              ${sceneLoaded ? 'opacity-100' : 'opacity-0'}`}>
               Neon Multipurpose Solution
             </h2>
-            <p className="mt-2 md:mt-4 text-gray-600 dark:text-neutral-300 
-              max-w-2xl text-xl md:text-3xl text-center md:text-left">
+            <p className={`mt-2 md:mt-4 text-gray-600 dark:text-neutral-300 
+              max-w-2xl text-lg sm:text-xl md:text-2xl lg:text-3xl text-center md:text-left
+              transition-opacity duration-500 delay-200
+              ${sceneLoaded ? 'opacity-100' : 'opacity-0'}`}>
               Discover comprehensive IT training programs designed to launch your tech career.
               Learn from industry experts and gain practical experience.
             </p>
           </div>
 
-          <div className="w-full md:w-1/2 h-[250px] md:h-[500px] relative">
-            <SplineScene 
-              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              className="absolute inset-0"
-            />
+          <div className={`w-full md:w-1/2 h-[200px] sm:h-[250px] md:h-[500px] relative
+            transition-transform duration-500 ease-out transform
+            ${sceneLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+            <div className="absolute inset-0">
+              <SplineScene 
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="absolute inset-0"
+                onLoad={handleSceneLoad}
+              />
+            </div>
+            {!sceneLoaded && <LoadingSpinner />}
           </div>
         </div>
       </Card>
     </section>
   );
-} 
+});
+
+Hero.displayName = 'Hero';

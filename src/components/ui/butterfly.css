@@ -1,0 +1,226 @@
+:root {
+    --color-wing: #1E90FF;
+    --color-sub-wing: #42A5FF;
+    --color-excited: #FFD700;
+}
+
+.butterfly-container {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    transform-style: preserve-3d;
+    pointer-events: none;
+    z-index: 1000;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    top: 0;
+    left: 0;
+}
+
+.butterfly-container.near-robot .butterfly {
+    animation: excited-hover 0.5s cubic-bezier(.48,.01,.54,1) infinite alternate-reverse;
+}
+
+.butterfly-container.near-robot .bit {
+    background: var(--color-excited);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.butterfly-container.near-robot .bit::after {
+    background: rgba(255, 215, 0, 0.6);
+}
+
+.butterfly-container.near-robot .wing {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
+}
+
+.butterfly-container.near-robot .wing:first-child {
+    animation: excited-leftflap 0.3s cubic-bezier(.48,.01,.54,1) infinite;
+}
+
+.butterfly-container.near-robot .wing:last-child {
+    animation: excited-rightflap 0.3s cubic-bezier(.48,.01,.54,1) infinite;
+}
+
+.butterfly {
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(50deg) rotateY(20deg) rotateZ(-50deg) translateY(0px);
+    animation: hover 1s cubic-bezier(.48,.01,.54,1) infinite alternate-reverse;
+}
+
+.butterfly::before {
+    content: '';
+    position: absolute;
+    background: #463c1e;
+    border-radius: 50%;
+    height: 35px;
+    left: 50%;
+    margin-left: -3px;
+    outline: 1px solid transparent;
+    top: -5px;
+    transform: rotateY(100deg);
+    width: 6px;
+    z-index: 2;
+}
+
+.shadow {
+    animation: shadow 250ms cubic-bezier(.48,.01,.54,1) infinite alternate-reverse;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    height: 3px;
+    position: absolute;
+    transform: translateX(-15px) translateY(35px);
+    width: 30px;
+}
+
+.wing {
+    background: transparent;
+    display: block;
+    opacity: 0.9;
+    outline: 1px solid transparent;
+    position: absolute;
+    top: 0;
+    filter: drop-shadow(0 0 3px rgba(30, 144, 255, 0.5));
+}
+
+.wing:first-child {
+    animation: leftflap 1s cubic-bezier(.48,.01,.54,1) infinite alternate-reverse;
+    height: 1px;
+    left: 0;
+    transform: rotateY(-20deg);
+    transform-origin: 700% 50%;
+    width: 1px;
+    z-index: 3;
+}
+
+.wing:last-child {
+    animation: rightflap 1s cubic-bezier(.48,.01,.54,1) infinite alternate-reverse;
+    right: 0;
+    transform: rotateY(200deg);
+    z-index: 1;
+}
+
+.bit {
+    background: var(--color-wing);
+    box-shadow: 0 0 5px rgba(30, 144, 255, 0.6);
+    border-radius: 50%;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform-origin: 100% 50%;
+}
+
+.bit::after {
+    content: '';
+    position: absolute;
+    background: var(--color-sub-wing);
+    border-radius: 50%;
+    right: 0;
+    top: 0;
+    transform-origin: 100% 50%;
+}
+
+.bit:first-child {
+    height: 25px;
+    text-align: center;
+    top: 5px;
+    transform: rotateZ(40deg);
+    width: 45px;
+}
+
+.bit:first-child::after {
+    height: 20px;
+    left: -10px;
+    top: 2px;
+    width: 35px;
+}
+
+.bit:last-child {
+    height: 18px;
+    transform: rotateZ(-40deg);
+    width: 35px;
+}
+
+.bit:last-child::after {
+    height: 15px;
+    left: -8px;
+    top: 2px;
+    width: 20px;
+    z-index: 1;
+}
+
+@keyframes hover {
+    0% {
+        transform: rotateX(50deg) rotateY(20deg) rotateZ(-50deg) translateZ(0px);
+    }
+    100% {
+        transform: rotateX(50deg) rotateY(20deg) rotateZ(-50deg) translateZ(-2px);
+    }
+}
+
+@keyframes shadow {
+    0% {
+        transform: translateX(-15px) translateY(35px) scale(1,1);
+    }
+    100% {
+        transform: translateX(-15px) translateY(35px) scale(1.1,1.1);
+    }
+}
+
+@keyframes leftflap {
+    0% {
+        transform: rotateY(-20deg);
+    }
+    50% {
+        transform: rotateY(90deg);
+    }
+    100% {
+        transform: rotateY(-20deg);
+    }
+}
+
+@keyframes rightflap {
+    0% {
+        transform: rotateY(200deg);
+    }
+    50% {
+        transform: rotateY(90deg);
+    }
+    100% {
+        transform: rotateY(200deg);
+    }
+}
+
+@keyframes excited-hover {
+    0% {
+        transform: rotateX(50deg) rotateY(20deg) rotateZ(-50deg) translateZ(0px) scale(1.2);
+    }
+    100% {
+        transform: rotateX(50deg) rotateY(20deg) rotateZ(-50deg) translateZ(-4px) scale(1.2);
+    }
+}
+
+@keyframes excited-leftflap {
+    0% {
+        transform: rotateY(-40deg);
+    }
+    50% {
+        transform: rotateY(100deg);
+    }
+    100% {
+        transform: rotateY(-40deg);
+    }
+}
+
+@keyframes excited-rightflap {
+    0% {
+        transform: rotateY(220deg);
+    }
+    50% {
+        transform: rotateY(80deg);
+    }
+    100% {
+        transform: rotateY(220deg);
+    }
+} 

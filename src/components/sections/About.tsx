@@ -23,52 +23,67 @@ const teamMembers = [
     id: 2,
     name: "Rajesh Kumar",
     role: "Technical Director",
-    image: "/assets/images/team/tech-director.jpg",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&fit=crop&auto=format&compress",
     bio: "Expert in full-stack development and cloud technologies, Rajesh ensures our curriculum stays cutting-edge and industry-relevant.",
     social: {
-      linkedin: "https://linkedin.com/in/rajeshkumar",
-      twitter: "https://twitter.com/rajeshkumar",
-      email: "rajesh@neonmultipurpose.com"
+      linkedin: "https://linkedin.com/in/rajesh",
+      twitter: "https://twitter.com/rajesh",
+      email: "mailto:rajesh@example.com"
     }
   },
   // Add more team members as needed
 ];
 
-// Add the media items array
+// Update the media items array with relevant project images
 const mediaItems = [
   {
     id: 1,
     type: "image",
-    title: "Campus View",
-    desc: "Our modern training facility",
-    url: "/assets/images/gallery/campus.jpg",
-    span: "md:col-span-1 md:row-span-3 sm:col-span-1 sm:row-span-2",
+    title: "Modern Development Environment",
+    desc: "State-of-the-art coding workspace with latest tools and technologies",
+    url: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2070&fit=crop",
+    span: "md:col-span-2 md:row-span-2",
   },
   {
     id: 2,
-    type: "video",
-    title: "Student Projects",
-    desc: "Live project demonstrations",
-    url: "/assets/videos/projects-demo.mp4",
-    span: "md:col-span-2 md:row-span-2 col-span-1 sm:col-span-2 sm:row-span-2",
+    type: "image",
+    title: "Collaborative Learning",
+    desc: "Interactive pair programming and team collaboration sessions",
+    url: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=2070&fit=crop",
+    span: "md:col-span-1 md:row-span-2",
   },
   {
     id: 3,
     type: "image",
-    title: "Training Session",
-    desc: "Interactive learning environment",
-    url: "/assets/images/gallery/training.jpg",
-    span: "md:col-span-1 md:row-span-3 sm:col-span-2 sm:row-span-2",
+    title: "AI & Machine Learning",
+    desc: "Advanced AI and machine learning training facilities",
+    url: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=2070&fit=crop",
+    span: "md:col-span-1 md:row-span-2",
   },
   {
     id: 4,
     type: "image",
-    title: "Lab Facilities",
-    desc: "State-of-the-art equipment",
-    url: "/assets/images/gallery/lab.jpg",
-    span: "md:col-span-2 md:row-span-2 sm:col-span-1 sm:row-span-2",
+    title: "Cloud Infrastructure",
+    desc: "Modern cloud computing and DevOps practices",
+    url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2070&fit=crop",
+    span: "md:col-span-2 md:row-span-2",
   },
-  // ... add more items as needed
+  {
+    id: 5,
+    type: "image",
+    title: "Mobile Development",
+    desc: "Cross-platform mobile app development training",
+    url: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&fit=crop",
+    span: "md:col-span-1 md:row-span-2",
+  },
+  {
+    id: 6,
+    type: "image",
+    title: "Web Technologies",
+    desc: "Full-stack web development with modern frameworks",
+    url: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?q=80&w=2074&fit=crop",
+    span: "md:col-span-2 md:row-span-2",
+  }
 ];
 
 export function About() {

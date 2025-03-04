@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Navbar from "@/components/layout/Navbar";
-import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Neon Multipurpose Solution",
-  description: "IT Training Institute in Bhaktapur, Nepal",
+  description: "Your trusted partner in IT education and professional development.",
 };
 
 export default function RootLayout({
