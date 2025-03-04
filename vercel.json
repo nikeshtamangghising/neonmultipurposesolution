@@ -1,5 +1,22 @@
 {
   "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "out",
+  "framework": "nextjs",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1",
+      "headers": {
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "1; mode=block"
+      }
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_URL": "https://nmsmultipurpose.vercel.app"
+  },
   "images": {
     "sizes": [640, 750, 828, 1080, 1200, 1920],
     "domains": ["images.unsplash.com", "prod.spline.design"],

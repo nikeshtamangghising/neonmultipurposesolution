@@ -31,6 +31,9 @@ export const metadata = {
   }
 };
 
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export default function RootLayout({
   children,
 }: {
@@ -40,6 +43,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
         <link rel="icon" type="image/png" href="/assets/images/logo.png" />
       </head>
       <body className={inter.className}>
@@ -50,7 +54,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Navbar />
-          {children}
+          <div id="root">
+            {children}
+          </div>
           <Footer />
         </ThemeProvider>
       </body>
