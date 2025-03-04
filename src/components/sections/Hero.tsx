@@ -77,8 +77,7 @@ export const Hero = memo(function Hero() {
             </p>
           </div>
 
-          <div className="w-full md:w-1/2 h-[350px] sm:h-[400px] md:h-[500px] lg:h-[600px] 
-            relative transition-all duration-500 ease-out transform">
+          <div className="w-full md:w-1/2 h-full relative">
             <div className="absolute inset-0 bg-blue-100/50 dark:bg-blue-900/50">
               {!splineError && (
                 <SplineScene 
