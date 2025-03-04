@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback, memo } from "react";
 import { cn } from "@/lib/utils";
-import "./butterfly.css";
+import "./butterflystyle.css";
 
 interface ButterflyProps {
   className?: string;
