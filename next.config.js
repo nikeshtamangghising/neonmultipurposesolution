@@ -34,8 +34,20 @@ const nextConfig = {
       type: 'asset/resource',
     });
 
+    // Add support for WebGL and other browser APIs
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      gl: false,
+      crypto: false,
+      stream: false,
+      path: false,
+      zlib: false,
+    };
+
     return config;
   },
+  // Add transpilePackages for client components
+  transpilePackages: ['@splinetool/react-spline', '@splinetool/runtime'],
 }
 
 module.exports = nextConfig; 

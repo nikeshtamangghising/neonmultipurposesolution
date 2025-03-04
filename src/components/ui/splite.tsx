@@ -13,10 +13,13 @@ LoadingSpinner.displayName = 'LoadingSpinner';
 
 // Dynamically import Spline with no SSR and handle loading state
 const Spline = dynamic(
-  () => import('@splinetool/react-spline').then((mod) => mod.default),
+  () => import('@splinetool/react-spline').then((mod) => mod.default).catch(err => {
+    console.error('Failed to load Spline:', err);
+    return () => null;
+  }),
   {
     ssr: false,
-    loading: () => <LoadingSpinner />
+    loading: () => <LoadingSpinner />,
   }
 );
 
@@ -32,6 +35,8 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -47,7 +52,7 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
     onLoad?.();
   };
 
-  const handleError = (e: React.SyntheticEvent<HTMLDivElement>) => {
+  const handleError = (e: any) => {
     console.error('Spline scene failed to load:', e);
     setError(new Error('Failed to load 3D scene'));
   };
@@ -64,18 +69,20 @@ export const SplineScene = memo(function SplineScene({ scene, className, onLoad 
 
   return (
     <div className={`w-full h-full ${className} ${!isLoaded ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}`}>
-      <Spline
-        scene={scene}
-        onLoad={handleLoad}
-        onError={handleError}
-        style={{
-          width: '100%',
-          height: '100%',
-          transform: isMobile ? 'scale(0.8)' : 'none',
-          transformOrigin: 'center center',
-          willChange: 'transform'
-        }}
-      />
+      <Suspense fallback={<LoadingSpinner />}>
+        <Spline
+          scene={scene}
+          onLoad={handleLoad}
+          onError={handleError}
+          style={{
+            width: '100%',
+            height: '100%',
+            transform: isMobile ? 'scale(0.8)' : 'none',
+            transformOrigin: 'center center',
+            willChange: 'transform'
+          }}
+        />
+      </Suspense>
     </div>
   );
 });
