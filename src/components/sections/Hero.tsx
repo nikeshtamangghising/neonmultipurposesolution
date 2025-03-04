@@ -79,21 +79,14 @@ export const Hero = memo(function Hero() {
 
           <div className="w-full md:w-[55%] h-full relative">
             <div className="absolute inset-0">
-              {!splineError && (
-                <SplineScene 
-                  key={retryCount}
-                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                  className="w-full h-full"
-                  onLoad={handleSceneLoad}
-                  onError={handleSplineError}
-                />
-              )}
+              <SplineScene 
+                key={retryCount}
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+                onLoad={handleSceneLoad}
+                onError={handleSplineError}
+              />
             </div>
-            {!isLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm">
-                <LoadingSpinner />
-              </div>
-            )}
             {splineError && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 
                 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm p-4 text-center">

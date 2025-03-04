@@ -11,20 +11,19 @@ const LoadingSpinner = memo(() => (
 
 LoadingSpinner.displayName = 'LoadingSpinner';
 
-// Import Spline component with no SSR and proper error handling
+// Import Spline component with no SSR
 const Spline = dynamic(
-  () => import('@splinetool/react-spline').then((mod) => {
-    if (!mod.default) {
-      throw new Error('Failed to load Spline component');
-    }
-    return mod.default;
-  }).catch((error) => {
-    console.error('Error loading Spline:', error);
-    throw error;
+  () => import('@splinetool/react-spline').catch(() => {
+    // Return a fallback component if Spline fails to load
+    return () => (
+      <div className="w-full h-full flex items-center justify-center text-red-500">
+        Failed to load 3D scene
+      </div>
+    );
   }),
   {
     ssr: false,
-    loading: () => <LoadingSpinner />,
+    loading: () => <LoadingSpinner />
   }
 );
 
@@ -37,88 +36,75 @@ interface SplineSceneProps {
 
 export const SplineScene = memo(function SplineScene({ 
   scene, 
-  className, 
+  className = '', 
   onLoad,
   onError 
 }: SplineSceneProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isReady, setIsReady] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const mountedRef = useRef(false);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
-          setIsReady(true);
-        } else {
-          setIsReady(false);
-        }
-      }
-    });
-
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
 
-  const handleLoad = () => {
-    setIsLoading(false);
-    if (onLoad) {
-      try {
+  const handleLoad = async () => {
+    try {
+      if (!mountedRef.current) return;
+      
+      setIsLoading(false);
+      setHasError(false);
+      
+      if (onLoad) {
         onLoad();
-      } catch (error) {
-        const errorMessage = 'Failed to initialize 3D scene';
-        console.error(errorMessage, error);
-        setLoadError(errorMessage);
-        if (onError) onError(errorMessage);
+      }
+    } catch (error) {
+      console.error('Spline load error:', error);
+      if (!mountedRef.current) return;
+      
+      setHasError(true);
+      setIsLoading(false);
+      
+      if (onError) {
+        onError(error instanceof Error ? error.message : 'Failed to load 3D scene');
       }
     }
   };
 
-  const handleError = (error: any) => {
-    const errorMessage = error?.message || 'Failed to load 3D scene';
-    console.error('Spline error:', error);
-    setLoadError(errorMessage);
-    setIsLoading(false);
-    if (onError) onError(errorMessage);
-  };
-
-  if (loadError) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-red-500">
-        {loadError}
-      </div>
-    );
-  }
-
   return (
-    <div 
-      ref={containerRef}
-      className={`w-full h-full ${className || ''}`}
-      style={{ minHeight: '200px', minWidth: '200px' }}
-    >
-      {isReady && (
-        <Suspense fallback={<LoadingSpinner />}>
-          <div className="relative w-full h-full">
+    <div className={`relative w-full h-full ${className}`}>
+      <Suspense fallback={<LoadingSpinner />}>
+        <div className="w-full h-full">
+          {!hasError && (
             <Spline
               scene={scene}
               onLoad={handleLoad}
-              onError={handleError}
               style={{
                 width: '100%',
                 height: '100%',
-                transformOrigin: 'center center',
                 position: 'absolute',
                 top: 0,
                 left: 0,
               }}
             />
-          </div>
-        </Suspense>
-      )}
-      {(isLoading || !isReady) && <LoadingSpinner />}
+          )}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm">
+              <LoadingSpinner />
+            </div>
+          )}
+          {hasError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm">
+              <div className="text-red-500 dark:text-red-400">
+                Failed to load 3D scene. Please try refreshing the page.
+              </div>
+            </div>
+          )}
+        </div>
+      </Suspense>
     </div>
   );
 });
