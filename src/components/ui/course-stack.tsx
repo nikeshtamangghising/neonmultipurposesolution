@@ -253,51 +253,40 @@ const CourseCard = memo(function CourseCard({
   }, [active, dismiss]);
 
   const onDragMove = useCallback((e: PointerEvent) => {
-    if (!ref.current || !active) return;
-
-    // Add threshold for horizontal movement on mobile
-    if (isMobile) {
-      const dx = e.clientX - drag.current.start;
-      const dy = Math.abs(e.clientY - drag.current.startY);
-      
-      // If vertical scroll is detected, cancel the drag
-      if (dy > Math.abs(dx) * 0.5) {
-        stopDragging(true);
-        return;
-      }
-    }
+    if (!ref.current || !active || !dragging) return;
 
     const dx = e.clientX - drag.current.start;
+    const dy = Math.abs(e.clientY - drag.current.startY);
+    
+    // Allow more horizontal movement before canceling
+    if (dy > Math.abs(dx) * 2) {
+      stopDragging(true);
+      return;
+    }
+
     drag.current.delta = dx;
-    ref.current.style.setProperty("--dx", dx.toString());
-  }, [active, isMobile, stopDragging]);
+    ref.current.style.setProperty("--dx", `${dx}px`);
+  }, [active, dragging, stopDragging]);
 
   const onDragEnd = useCallback((e: PointerEvent) => {
-    if (!ref.current || !active) return;
+    if (!ref.current || !active || !dragging) return;
     
     const dx = drag.current.delta;
     const duration = Date.now() - drag.current.startTime;
     const velocity = Math.abs(dx / duration);
     
-    // Adjust threshold based on velocity and screen size
-    const threshold = isMobile ? 0.4 : 0.3;
-    const shouldDismiss = Math.abs(dx) > ref.current.clientWidth * threshold || velocity > 0.5;
+    // Make it easier to dismiss
+    const threshold = 0.2; // 20% of card width
+    const velocityThreshold = 0.2; // Lower velocity threshold
+    const shouldDismiss = Math.abs(dx) > ref.current.clientWidth * threshold || velocity > velocityThreshold;
     
     stopDragging(shouldDismiss);
-  }, [active, isMobile, stopDragging]);
+  }, [active, dragging, stopDragging]);
 
   const onDragCancel = useCallback(() => stopDragging(true), [stopDragging]);
 
   const onDragStart = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!ref.current || !active || e.button !== 0) return;
-    
-    // Don't initiate drag on mobile scroll attempts
-    if (isMobile) {
-      const touchY = e.clientY;
-      const cardRect = ref.current.getBoundingClientRect();
-      const isScrollAttempt = touchY > cardRect.top + 100 && touchY < cardRect.bottom - 100;
-      if (isScrollAttempt) return;
-    }
     
     try {
       animation.current?.cancel();
@@ -320,7 +309,7 @@ const CourseCard = memo(function CourseCard({
       console.error('Error during drag start:', error);
       setDragging(false);
     }
-  }, [active, isMobile, onDragMove]);
+  }, [active, onDragMove]);
 
   const onClick = useCallback(() => {
     if (!ref.current || !isMobile) return;
@@ -337,13 +326,16 @@ const CourseCard = memo(function CourseCard({
       className={cn(
         "relative w-full overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-800 transition-shadow",
         "hover:shadow-xl dark:shadow-none",
-        dragging ? "cursor-grabbing" : "cursor-default md:cursor-grab",
+        dragging ? "cursor-grabbing touch-none select-none" : "cursor-default touch-pan-y",
         active && "transform-gpu will-change-transform",
-        "select-none touch-pan-y",
         "style-transform: translateX(var(--dx, 0px))"
       )}
     >
-      <div className={cn("space-y-4 sm:space-y-6", hideContent && "invisible")}>
+      <div className={cn(
+        "space-y-4 sm:space-y-6",
+        hideContent && "invisible",
+        "p-4 sm:p-6 md:p-8"
+      )}>
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="w-full sm:w-1/4 shrink-0 space-y-4 sm:space-y-6">
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg">
@@ -399,88 +391,82 @@ const CourseCard = memo(function CourseCard({
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-8">
-              <div className="space-y-6">
-                {highlights && (
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-foreground flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-amber-500">
-                        <path fillRule="evenodd" d="M10 1a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 1zM5.05 3.05a.75.75 0 011.06 0l1.062 1.06A.75.75 0 116.11 5.173L5.05 4.11a.75.75 0 010-1.06zm9.9 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM3 10a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 013 10zm11.75-.75a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5h-1.5zm-9.02 4.72a.75.75 0 011.06 0l1.062 1.06a.75.75 0 11-1.061 1.062l-1.06-1.061a.75.75 0 010-1.06zm7.84 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM10 15.25a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75z" clipRule="evenodd" />
-                      </svg>
-                      Course Highlights
-                    </h4>
-                    <ul className="space-y-0.5">
-                      {highlights.map((highlight, i) => (
-                        <li key={i} className="flex items-start gap-1">
-                          <span className="mt-1 h-0.5 w-0.5 rounded-full bg-amber-500 shrink-0"></span>
-                          <span className="text-[10px] text-muted-foreground">{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              <div className="sm:col-span-2 space-y-8">
-                <div className="grid sm:grid-cols-2 gap-8">
-                  {prerequisites && (
-                    <div className="space-y-2">
-                      <h4 className="text-xs font-semibold text-foreground flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-blue-500">
-                          <path d="M15.98 1.804a1 1 0 00-1.96 0l-.24 1.192a1 1 0 01-.784.785l-1.192.238a1 1 0 000 1.962l1.192.238a1 1 0 01.785.785l.238 1.192a1 1 0 001.962 0l.238-1.192a1 1 0 01.785-.785l1.192-.238a1 1 0 000-1.962l-1.192-.238a1 1 0 01-.785-.785l-.238-1.192zM6.949 5.684a1 1 0 00-1.898 0l-.683 2.051a1 1 0 01-.633.633l-2.051.683a1 1 0 000 1.898l2.051.684a1 1 0 01.633.632l.683 2.051a1 1 0 001.898 0l.683-2.051a1 1 0 01.633-.633l2.051-.683a1 1 0 000-1.898l-2.051-.683a1 1 0 01-.633-.633L6.95 5.684z" />
-                        </svg>
-                        Prerequisites
-                      </h4>
-                      <ul className="space-y-0.5">
-                        {prerequisites.map((item, i) => (
-                          <li key={i} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <span className="h-0.5 w-0.5 rounded-full bg-blue-500"></span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {tools && (
-                    <div className="space-y-2">
-                      <h4 className="text-xs font-semibold text-foreground flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-purple-500">
-                          <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
-                        </svg>
-                        Tools & Technologies
-                      </h4>
-                      <ul className="space-y-0.5">
-                        {tools.map((item, i) => (
-                          <li key={i} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <span className="h-0.5 w-0.5 rounded-full bg-purple-500"></span>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {highlights && (
+                <div className="space-y-3 bg-secondary/5 dark:bg-secondary/10 rounded-xl p-4">
+                  <h4 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-amber-500">
+                      <path fillRule="evenodd" d="M10 1a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 1zM5.05 3.05a.75.75 0 011.06 0l1.062 1.06A.75.75 0 116.11 5.173L5.05 4.11a.75.75 0 010-1.06zm9.9 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM3 10a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 013 10zm11.75-.75a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5h-1.5zm-9.02 4.72a.75.75 0 011.06 0l1.062 1.06a.75.75 0 11-1.061 1.062l-1.06-1.061a.75.75 0 010-1.06zm7.84 0a.75.75 0 010 1.06l-1.06 1.062a.75.75 0 01-1.062-1.061l1.061-1.06a.75.75 0 011.06 0zM10 15.25a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75z" clipRule="evenodd" />
+                    </svg>
+                    Course Highlights
+                  </h4>
+                  <ul className="grid grid-cols-1 gap-2">
+                    {highlights.map((highlight, i) => (
+                      <li key={i} className="flex items-start gap-2 group">
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-amber-500/50 group-hover:bg-amber-500 transition-colors shrink-0"></span>
+                        <span className="text-[11px] text-muted-foreground group-hover:text-foreground transition-colors">{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
+              )}
 
-                {outcomes && (
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold text-foreground flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3 text-green-500">
-                        <path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                      </svg>
-                      Learning Outcomes
-                    </h4>
-                    <ul className="space-y-0.5">
-                      {outcomes.map((outcome, i) => (
-                        <li key={i} className="flex items-start gap-1">
-                          <span className="mt-1 h-0.5 w-0.5 rounded-full bg-green-500 shrink-0"></span>
-                          <span className="text-[10px] text-muted-foreground">{outcome}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+              {prerequisites && (
+                <div className="space-y-3 bg-secondary/5 dark:bg-secondary/10 rounded-xl p-4">
+                  <h4 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-blue-500">
+                      <path d="M15.98 1.804a1 1 0 00-1.96 0l-.24 1.192a1 1 0 01-.784.785l-1.192.238a1 1 0 000 1.962l1.192.238a1 1 0 01.785.785l.238 1.192a1 1 0 001.962 0l.238-1.192a1 1 0 01.785-.785l1.192-.238a1 1 0 000-1.962l-1.192-.238a1 1 0 01-.785-.785l-.238-1.192zM6.949 5.684a1 1 0 00-1.898 0l-.683 2.051a1 1 0 01-.633.633l-2.051.683a1 1 0 000 1.898l2.051.684a1 1 0 01.633.632l.683 2.051a1 1 0 001.898 0l.683-2.051a1 1 0 01.633-.633l2.051-.683a1 1 0 000-1.898l-2.051-.683a1 1 0 01-.633-.633L6.95 5.684z" />
+                    </svg>
+                    Prerequisites
+                  </h4>
+                  <ul className="grid grid-cols-1 gap-2">
+                    {prerequisites.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 group">
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-blue-500/50 group-hover:bg-blue-500 transition-colors"></span>
+                        <span className="text-[11px] text-muted-foreground group-hover:text-foreground transition-colors">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {tools && (
+                <div className="space-y-3 bg-secondary/5 dark:bg-secondary/10 rounded-xl p-4">
+                  <h4 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-purple-500">
+                      <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                    </svg>
+                    Tools & Technologies
+                  </h4>
+                  <ul className="grid grid-cols-1 gap-2">
+                    {tools.map((item, i) => (
+                      <li key={i} className="flex items-start gap-2 group">
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-purple-500/50 group-hover:bg-purple-500 transition-colors shrink-0"></span>
+                        <span className="text-[11px] text-muted-foreground group-hover:text-foreground transition-colors">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {outcomes && (
+                <div className="space-y-3 bg-secondary/5 dark:bg-secondary/10 rounded-xl p-4">
+                  <h4 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-green-500">
+                      <path fillRule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                    </svg>
+                    Learning Outcomes
+                  </h4>
+                  <ul className="grid grid-cols-1 gap-2">
+                    {outcomes.map((outcome, i) => (
+                      <li key={i} className="flex items-start gap-2 group">
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-green-500/50 group-hover:bg-green-500 transition-colors shrink-0"></span>
+                        <span className="text-[11px] text-muted-foreground group-hover:text-foreground transition-colors">{outcome}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -12,22 +12,20 @@ const coursesData = [
     level: "Intermediate" as const,
     image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&fit=crop",
     highlights: [
-      "Modern React & Next.js patterns",
-      "Backend development with Node.js",
-      "Database design & optimization",
-      "DevOps & deployment workflows",
-      "API design and implementation",
-      "Authentication and authorization",
-      "Real-time applications with WebSocket",
-      "Performance optimization techniques"
+      "Modern React & Next.js",
+      "Backend with Node.js",
+      "Database Design",
+      "DevOps & CI/CD",
+      "API Development",
+      "Security & Auth"
     ],
     prerequisites: [
-      "Basic JavaScript knowledge",
-      "Understanding of HTML & CSS",
-      "Familiarity with Git",
-      "Basic command line usage",
-      "Problem-solving mindset",
-      "Basic understanding of HTTP"
+      "JavaScript Basics",
+      "HTML & CSS",
+      "Git Version Control",
+      "Command Line",
+      "Problem Solving",
+      "HTTP Fundamentals"
     ],
     tools: [
       "VS Code",
@@ -35,19 +33,15 @@ const coursesData = [
       "Docker",
       "AWS/Vercel",
       "MongoDB/PostgreSQL",
-      "Redis",
-      "Jest/Cypress",
       "TypeScript"
     ],
     outcomes: [
-      "Build full-stack web applications",
-      "Deploy and scale applications",
-      "Implement modern security practices",
-      "Create responsive UI designs",
-      "Develop RESTful and GraphQL APIs",
-      "Implement real-time features",
-      "Write clean, maintainable code",
-      "Work with modern development tools"
+      "Build Full-Stack Apps",
+      "Deploy & Scale Apps",
+      "Implement Security",
+      "Create REST APIs",
+      "Design Databases",
+      "Write Clean Code"
     ],
     schedule: {
       hoursPerWeek: 15,
@@ -63,24 +57,20 @@ const coursesData = [
     level: "Beginner" as const,
     image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=2070&fit=crop",
     highlights: [
-      "React Native fundamentals",
-      "Native device features",
-      "App store optimization",
-      "Performance optimization",
-      "State management with Redux",
-      "Offline data synchronization",
-      "Push notifications",
-      "Mobile UI/UX best practices",
-      "App monetization strategies",
-      "Analytics implementation"
+      "React Native Core",
+      "Native Features",
+      "App Store Deploy",
+      "State Management",
+      "Offline Storage",
+      "Push Notifications"
     ],
     prerequisites: [
-      "JavaScript basics",
-      "React fundamentals",
-      "Mobile UI/UX concepts",
-      "Basic understanding of APIs",
-      "Familiarity with npm/yarn",
-      "Version control with Git"
+      "JavaScript Basics",
+      "React Fundamentals",
+      "Mobile UI/UX",
+      "API Basics",
+      "NPM/Yarn",
+      "Git Basics"
     ],
     tools: [
       "Expo",
@@ -88,19 +78,15 @@ const coursesData = [
       "Xcode",
       "Firebase",
       "Redux/MobX",
-      "React Navigation",
-      "AsyncStorage",
-      "React Native Testing Library"
+      "React Navigation"
     ],
     outcomes: [
-      "Develop cross-platform mobile apps",
-      "Implement native device features",
-      "Publish to app stores",
-      "Create engaging mobile UIs",
-      "Handle offline data storage",
-      "Implement push notifications",
-      "Optimize app performance",
-      "Integrate third-party services"
+      "Build Mobile Apps",
+      "Native Integration",
+      "App Store Launch",
+      "Offline Support",
+      "Push Notifications",
+      "Performance Tuning"
     ],
     schedule: {
       hoursPerWeek: 12,
@@ -116,48 +102,36 @@ const coursesData = [
     level: "Advanced" as const,
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2070&fit=crop",
     highlights: [
-      "Neural networks & deep learning",
-      "Natural language processing",
-      "Computer vision applications",
-      "MLOps & model deployment",
-      "Reinforcement learning",
-      "Time series analysis",
-      "Generative AI models",
-      "Model optimization",
-      "Ethics in AI",
-      "Large language models"
+      "Neural Networks",
+      "NLP Applications",
+      "Computer Vision",
+      "MLOps & Deploy",
+      "Model Training",
+      "AI Ethics"
     ],
     prerequisites: [
-      "Python programming",
-      "Linear algebra basics",
-      "Statistics fundamentals",
-      "Data analysis experience",
-      "Calculus fundamentals",
-      "Basic ML concepts",
-      "Data preprocessing skills",
-      "Scientific computing"
+      "Python Programming",
+      "Linear Algebra",
+      "Statistics",
+      "Data Analysis",
+      "Calculus Basics",
+      "Scientific Computing"
     ],
     tools: [
       "TensorFlow",
       "PyTorch",
-      "Jupyter Notebooks",
-      "Google Colab",
+      "Jupyter",
       "Scikit-learn",
       "Pandas/NumPy",
-      "Hugging Face",
-      "MLflow",
-      "Docker",
-      "Git LFS"
+      "Hugging Face"
     ],
     outcomes: [
-      "Build and train ML models",
-      "Deploy AI solutions",
-      "Implement NLP applications",
-      "Create computer vision systems",
-      "Develop generative AI models",
-      "Optimize model performance",
-      "Handle large-scale datasets",
-      "Build production ML pipelines"
+      "Build ML Models",
+      "Deploy AI Solutions",
+      "NLP Applications",
+      "Computer Vision",
+      "Model Optimization",
+      "Production Pipeline"
     ],
     schedule: {
       hoursPerWeek: 20,
@@ -173,50 +147,36 @@ const coursesData = [
     level: "Advanced" as const,
     image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&fit=crop",
     highlights: [
-      "Multi-cloud architecture",
-      "Container orchestration",
+      "Cloud Architecture",
+      "Containerization",
       "Infrastructure as Code",
-      "Security best practices",
-      "Microservices architecture",
-      "Serverless computing",
-      "Cloud cost optimization",
-      "High availability design",
-      "Disaster recovery",
-      "Performance monitoring"
+      "Security Best Practices",
+      "Microservices",
+      "Serverless Computing"
     ],
     prerequisites: [
-      "Linux administration",
-      "Networking basics",
-      "Command line proficiency",
-      "Basic scripting skills",
-      "Version control with Git",
-      "Basic cloud concepts",
-      "Security fundamentals",
-      "Basic programming skills"
+      "Linux Basics",
+      "Networking",
+      "Command Line",
+      "Basic Scripting",
+      "Git Version Control",
+      "Cloud Concepts"
     ],
     tools: [
       "AWS/Azure/GCP",
       "Kubernetes",
       "Terraform",
-      "Jenkins",
       "Docker",
-      "Ansible",
-      "Prometheus",
-      "Grafana",
-      "ELK Stack",
-      "HashiCorp Vault"
+      "Jenkins",
+      "Prometheus"
     ],
     outcomes: [
-      "Design cloud architectures",
-      "Implement CI/CD pipelines",
-      "Manage containerized applications",
-      "Optimize cloud costs",
-      "Implement security controls",
-      "Monitor cloud infrastructure",
-      "Automate deployments",
-      "Handle cloud migrations",
-      "Implement disaster recovery",
-      "Scale applications effectively"
+      "Design Cloud Systems",
+      "Implement CI/CD",
+      "Container Management",
+      "Cost Optimization",
+      "Security Controls",
+      "Auto Deployment"
     ],
     schedule: {
       hoursPerWeek: 18,
@@ -248,7 +208,7 @@ export function Courses() {
           </p>
         </div>
 
-        <div className="relative max-w-5xl mx-auto h-auto pb-4 sm:pb-6 md:pb-8">
+        <div className="relative max-w-5xl mx-auto h-auto pb-4 sm:pb-6 md:pb-8 mt-16 sm:mt-20 md:mt-24 lg:mt-28">
           <CourseStack courses={coursesData} />
         </div>
       </div>

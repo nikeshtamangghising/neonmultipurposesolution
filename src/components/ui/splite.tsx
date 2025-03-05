@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { Suspense, memo, useEffect, useState } from 'react'
+import { Suspense, memo, useEffect, useState, useRef } from 'react'
 
 const LoadingSpinner = memo(() => (
   <div className="w-full h-full flex items-center justify-center">
@@ -20,7 +20,7 @@ const Spline = dynamic(() => import('@splinetool/react-spline'), {
 interface SplineSceneProps {
   scene: string;
   className?: string;
-  onLoad?: () => void;
+  onLoad?: (spline: any) => void;
   onError?: (error: string) => void;
 }
 
@@ -32,6 +32,7 @@ export const SplineScene = memo(function SplineScene({
 }: SplineSceneProps) {
   const [loadingState, setLoadingState] = useState<'loading' | 'loaded' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const splineRef = useRef<any>(null);
 
   useEffect(() => {
     // Reset state when scene URL changes
@@ -39,10 +40,11 @@ export const SplineScene = memo(function SplineScene({
     setErrorMessage('');
   }, [scene]);
 
-  const handleLoad = () => {
+  const handleLoad = (splineApp: any) => {
     console.log('Spline scene loaded successfully');
+    splineRef.current = splineApp;
     setLoadingState('loaded');
-    if (onLoad) onLoad();
+    if (onLoad) onLoad(splineApp);
   };
 
   const handleError = (error: any) => {
@@ -61,6 +63,7 @@ export const SplineScene = memo(function SplineScene({
             scene={scene}
             onLoad={handleLoad}
             onError={handleError}
+            style={{ width: '100%', height: '100%' }}
           />
         )}
         
