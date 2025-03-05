@@ -44,6 +44,13 @@ const OPACITY_FACTOR = {
   md: 0.08
 };
 
+interface DragState {
+  start: number;
+  startY: number;
+  delta: number;
+  startTime: number;
+}
+
 export function CourseStack({ courses }: { courses: CourseItem[] }) {
   const [dismissedCourses, setDismissedCourses] = useState<string[]>([]);
   const [isVisible, setIsVisible] = useState(true);
@@ -192,15 +199,8 @@ const CourseCard = memo(function CourseCard({
   const { isMobile } = useMediaQuery();
   const ref = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
-  const drag = useRef({ start: 0, delta: 0, startTime: 0 });
+  const drag = useRef<DragState>({ start: 0, startY: 0, delta: 0, startTime: 0 });
   const animation = useRef<Animation>();
-
-  const onDragMove = useCallback((e: PointerEvent) => {
-    if (!ref.current || !active) return;
-    const dx = e.clientX - drag.current.start;
-    drag.current.delta = dx;
-    ref.current.style.setProperty("--dx", dx.toString());
-  }, [active]);
 
   const dismiss = useCallback(() => {
     if (!ref.current || !active) return;
@@ -242,7 +242,7 @@ const CourseCard = memo(function CourseCard({
       );
       animation.current.onfinish = () => ref.current?.style.setProperty("--dx", "0");
 
-      drag.current = { start: 0, delta: 0, startTime: 0 };
+      drag.current = { start: 0, startY: 0, delta: 0, startTime: 0 };
     } catch (error) {
       console.error('Error during drag stop:', error);
       if (ref.current) {
@@ -250,7 +250,27 @@ const CourseCard = memo(function CourseCard({
       }
       setDragging(false);
     }
-  }, [active, dismiss, onDragMove]);
+  }, [active, dismiss]);
+
+  const onDragMove = useCallback((e: PointerEvent) => {
+    if (!ref.current || !active) return;
+
+    // Add threshold for horizontal movement on mobile
+    if (isMobile) {
+      const dx = e.clientX - drag.current.start;
+      const dy = Math.abs(e.clientY - drag.current.startY);
+      
+      // If vertical scroll is detected, cancel the drag
+      if (dy > Math.abs(dx) * 0.5) {
+        stopDragging(true);
+        return;
+      }
+    }
+
+    const dx = e.clientX - drag.current.start;
+    drag.current.delta = dx;
+    ref.current.style.setProperty("--dx", dx.toString());
+  }, [active, isMobile, stopDragging]);
 
   const onDragEnd = useCallback((e: PointerEvent) => {
     if (!ref.current || !active) return;
@@ -271,12 +291,20 @@ const CourseCard = memo(function CourseCard({
   const onDragStart = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!ref.current || !active || e.button !== 0) return;
     
+    // Don't initiate drag on mobile scroll attempts
+    if (isMobile) {
+      const touchY = e.clientY;
+      const cardRect = ref.current.getBoundingClientRect();
+      const isScrollAttempt = touchY > cardRect.top + 100 && touchY < cardRect.bottom - 100;
+      if (isScrollAttempt) return;
+    }
+    
     try {
       animation.current?.cancel();
       
-      const touchSensitivity = isMobile ? 1 : 0.5;
       drag.current = {
         start: e.clientX,
+        startY: e.clientY,
         delta: 0,
         startTime: Date.now()
       };
@@ -307,11 +335,11 @@ const CourseCard = memo(function CourseCard({
       ref={ref}
       onPointerDown={onDragStart}
       className={cn(
-        "relative w-full overflow-hidden bg-white dark:bg-gray-800 transition-shadow",
-        "hover:shadow-xl dark:shadow-none cursor-grab active:cursor-grabbing",
-        dragging && "shadow-2xl",
+        "relative w-full overflow-y-auto overflow-x-hidden bg-white dark:bg-gray-800 transition-shadow",
+        "hover:shadow-xl dark:shadow-none",
+        dragging ? "cursor-grabbing" : "cursor-default md:cursor-grab",
         active && "transform-gpu will-change-transform",
-        "touch-none select-none",
+        "select-none touch-pan-y",
         "style-transform: translateX(var(--dx, 0px))"
       )}
     >
